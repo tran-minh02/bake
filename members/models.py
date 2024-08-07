@@ -4,11 +4,23 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.forms import UserCreationForm
 
 # Create your models here.
+
+class ShippingAddress(models.Model):
+    customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
+    address = models.CharField(max_length=200,null=True)
+    state = models.CharField(max_length=200,null=True)
+    mobile = models.CharField(max_length=10,null=True)
+    date_added =  models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.address
+
 class Order(models.Model):
     customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
     date_order =  models.DateTimeField(auto_now_add=True)
     complete = models.BooleanField(default=False,null=True,blank=False)
     transaction_id = models.CharField(max_length=200,null=True)
+    shipping_address = models.ForeignKey(ShippingAddress, on_delete=models.SET_NULL, blank=True, null=True)
     
     def __str__(self):
         return str(self.id)
@@ -59,16 +71,7 @@ class OrderItem(models.Model):
         total = self.product.price * self.quantity
         return total
 
-class ShippingAddress(models.Model):
-    customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
-    order = models.ForeignKey(Order,on_delete=models.SET_NULL,blank=True,null=True)
-    address = models.CharField(max_length=200,null=True)
-    state = models.CharField(max_length=200,null=True)
-    mobile = models.CharField(max_length=10,null=True)
-    date_added =  models.DateTimeField(auto_now_add=True)
-    
-    def __str__(self):
-        return self.address
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
