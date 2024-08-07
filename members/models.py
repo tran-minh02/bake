@@ -13,7 +13,7 @@ class ShippingAddress(models.Model):
     date_added =  models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.address
+        return f'{self.customer} {self.address}'
 
 class Order(models.Model):
     customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
@@ -54,6 +54,7 @@ class Product(models.Model):
     price = models.FloatField()
     digital = models.BooleanField(default=False,null=True,blank=False)
     detail = models.TextField(null=True,blank=True)
+    image = models.ImageField(upload_to = 'members/static/images/',blank=True,null=True)
     
     def __str__(self):
         return self.name
@@ -71,12 +72,16 @@ class OrderItem(models.Model):
         total = self.product.price * self.quantity
         return total
 
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthdate = models.DateField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
-
+    def __str__(self):
+        return self.user.username
+    
+class Staff(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    birthdate = models.DateField(null=True, blank=True)
+    phone_number = models.CharField(max_length=15, null=True, blank=True)
     def __str__(self):
         return self.user.username
