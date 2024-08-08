@@ -5,50 +5,64 @@ from django.contrib.auth import authenticate,login,logout
 from .models import UserCreationForm
 # Create your views here.
 
+#Biến tổng
+user_not_login = 'visible'
+user_login = 'hidden'
 
 def home(request):
-    if request.user.is_authenticated:
-        context = {
-        'user_not_login': 'hidden', 
-        'user_login': 'visible'
-        }
-    else:
-        context = {
-        'user_not_login': 'visible', 
-        'user_login': 'hidden'
-        }
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
     return render(request, 'app/home.html',context)
 
 def login_now(request):
+    global user_login
+    global user_not_login
     if request.user.is_authenticated:
-        return redirect('home')
+        context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+        }
+        return render(request, 'app/home.html', context)
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request,username = username,password =password)
         if user is not None :
-            context = {'user_not_login': 'hidden', 
-                       'user_login': 'visible'}
+            user_not_login = 'hidden'
+            user_login = 'visible'
+            context = {
+                'user_not_login': user_not_login, 
+                'user_login': user_login
+            }
             login(request,user)
             return render(request,'app/home.html',context)
         else:
             messages.info(request, 'Tài khoản hoặc mật khẩu không chính xác!')
-        
+    
+    user_not_login = 'visibile'
+    user_login = 'hidden'
     context = {
-        'user_not_login': 'hidden', 
-        'user_login': 'hidden'
-        }
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
     return render(request,'app/login.html',context)
 
 def logout_now(request):
+    
     logout(request)
+    user_not_login = 'visibile'
+    user_login = 'hidden'
     context = {
-        'user_not_login': 'visible', 
-        'user_login': 'hidden'
+        'user_not_login': user_not_login, 
+        'user_login': user_login
     }
     return render(request, 'app/home.html', context)
 
 def register(request):
+    global user_login
+    global user_not_login
     form = UserCreationForm()
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -61,35 +75,50 @@ def register(request):
             login(request,user)
             # Lưu thông tin người dùng vào session
             request.session['user_id'] = user.id
+            user_not_login = 'hidden'
+            user_login = 'visibile'
             context = {
-                'user': username, 
-                'user_login':'show', 
-                'user_not_login':'hidden'}
+                'user': username,
+                'user_login':user_login, 
+                'user_not_login':user_not_login
+                }
             return render(request,'app/home.html',context)
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Lỗi ở trường '{form.fields[field].label}': {error}")
-    user_not_login = "show"
+    user_not_login = "visibile"
     user_login = "hidden"
     context = {
-        'form': form, 
-        'user_login':'hidden', 
-        'user_not_login':'show'
+        'form': form,
+        'user_login':user_login,
+        'user_not_login':user_not_login
     }
     return render(request, 'app/register.html', context)
 
 def search(request):
-    return render(request, 'app/search.html')
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
+    return render(request, 'app/search.html',context)
 
 def category(request):
     return render(request, 'app/category.html')
 
 def checkout(request):
-    return render(request, 'app/checkout.html')
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
+    return render(request, 'app/checkout.html',context)
 
 def detail(request):
     return render(request, 'app/detail.html')
 
 def cart(request):
-    return render(request, 'app/cart.html')
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
+    return render(request, 'app/cart.html', context)

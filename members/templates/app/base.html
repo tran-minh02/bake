@@ -42,8 +42,8 @@
         }
         const csrftoken = getCookie('csrftoken');
         </script>
-        <script src="{%static 'app/js/login.js' %}" ></script>
-        <script src="{%static 'app/js/register.js' %}" ></script>
+        {% comment %} <script src="{%static 'app/js/login.js' %}" ></script>
+        <script src="{%static 'app/js/register.js' %}" ></script> {% endcomment %}
         <title>Web bán hàng điện tử </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -53,12 +53,15 @@
         <!--  Header -->
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
             <div class="container-fluid">
+              {% comment %} Icon {% endcomment %}
               <a class="navbar-brand" href="{% url 'home' %}">
-              <img id='Main-icon' src={% static 'app/images/Star.jpg' %} width=50 height=50>
+              <img id='Main-icon' src={% static 'app/images/cat.png' %} width=50 height=50>
               </a>
+              {% comment %} 1 {% endcomment %}
               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
               </button>
+              {% comment %} 2 {% endcomment %}
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item custom-item">
@@ -74,12 +77,6 @@
                       {% endfor %}
                     </ul>
                   </li>
-                 <!-- <li class="nav-item">
-                    <a class="nav-link">Giới thiệu</a>
-                  </li>
-                  <li class="nav-item">
-                    <a class="nav-link">Hỗ Trợ</a>
-                  </li> -->
                 </ul>
                 <form class="d-flex" role="search" method = 'POST' action = {% url 'search' %}>
                   {% csrf_token %}
@@ -87,12 +84,12 @@
                   <button class="btn btn-outline-success" type="submit">Enter</button>
                 </form>
               </div>
-
-                {% comment %} Đây là chỗ hiện thông tin nếu người dùng đã đăng nhập thành công  {% endcomment %}
-                <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_login}}">
-                  <span>{{ request.user }} </span>
-                  <span><a href = "{% url 'logout' %}"> Đăng xuất </span>
-                </div>
+              {% comment %} Phần 3 {% endcomment %}
+              {% comment %} Đây là chỗ hiện thông tin nếu người dùng đã đăng nhập thành công  {% endcomment %}
+              <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_login}}">
+                <span>{{ request.user }} </span>
+                <span><a href = "{% url 'logout' %}"> Đăng xuất </span>
+              </div>
 
                 <!--<li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -104,10 +101,10 @@
                     <li><a class="dropdown-item" href="#">Exit</a></li>
                   </ul>
                 </li>-->
-                <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_not_login}}">
-                  <a class="btn" href= {% url 'login' %}>Đăng nhập</a>
-                  <a class="btn" href= {% url 'register' %}>Đăng kí </a>
-                </div>
+              <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_not_login}}">
+                <a class="btn" href= {% url 'login' %}>Đăng nhập</a>
+                <a class="btn" href= {% url 'register' %}>Đăng kí </a>
+              </div>
               <div class='from-inline my-2 my-lg-0'>  
                 <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.png' %}"></a>
                 <p id='cart-total' >{{cartitems}}</p>
@@ -139,7 +136,7 @@
         <script src="" async defer></script>
         <!-- footer -->
         <footer class = "container--fluid bg-success text-center fixed-bottom p-2 mt-5">
-            Copyright 2024 - Made by Dragon Warrior
+            Copyright
         </footer>
         <script src="{%static 'app/js/cart.js' %}" > </script>
     </body>

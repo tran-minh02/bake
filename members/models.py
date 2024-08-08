@@ -14,6 +14,7 @@ class ShippingAddress(models.Model):
     
     def __str__(self):
         return f'{self.customer} {self.address}'
+    
 
 class Order(models.Model):
     customer = models.ForeignKey(User,on_delete=models.SET_NULL,blank=True,null=True)
@@ -54,7 +55,7 @@ class Product(models.Model):
     price = models.FloatField()
     digital = models.BooleanField(default=False,null=True,blank=False)
     detail = models.TextField(null=True,blank=True)
-    image = models.ImageField(upload_to = 'members/static/images/',blank=True,null=True)
+    image = models.ImageField(upload_to = 'uploads/',blank=True,null=True)
     
     def __str__(self):
         return self.name
