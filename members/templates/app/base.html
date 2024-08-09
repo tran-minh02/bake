@@ -51,7 +51,8 @@
     </head>
     <body>
         <!--  Header -->
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        {% block nav_bar %}
+        <nav class="navbar navbar-expand-md bg-body-tertiary">
             <div class="container-fluid">
               {% comment %} Icon {% endcomment %}
               <a class="navbar-brand" href="{% url 'home' %}">
@@ -63,10 +64,13 @@
               </button>
               {% comment %} 2 {% endcomment %}
               <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                   <li class="nav-item custom-item">
                     <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Trang chủ</a>
                   </li>
+                  
                   <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="bottom" data-bs-toggle="dropdown" aria-expanded="false">
                      Danh mục sản phẩm 
@@ -77,6 +81,7 @@
                       {% endfor %}
                     </ul>
                   </li>
+                
                 </ul>
                 <form class="d-flex" role="search" method = 'POST' action = {% url 'search' %}>
                   {% csrf_token %}
@@ -86,57 +91,43 @@
               </div>
               {% comment %} Phần 3 {% endcomment %}
               {% comment %} Đây là chỗ hiện thông tin nếu người dùng đã đăng nhập thành công  {% endcomment %}
-              <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_login}}">
-                <span>{{ request.user }} </span>
-                <span><a href = "{% url 'logout' %}"> Đăng xuất </span>
+              <div class='dropdown from-inline ms-2 my-2 my-lg-0' style = "visibility: {{user_login}}">
+                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+                  Khách hàng : {{ request.user }}
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{% url 'profile' %}">Hồ sơ người dùng</a></li>
+                  <li><a class="dropdown-item" href="{% url 'logout' %}">Đăng xuất</a></li>
+                </ul>                     
               </div>
 
-                <!--<li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                   Khách hàng 
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Thông tin cá nhân</a></li>
-                    <li><a class="dropdown-item" href="{% url 'cart' %}">Đơn hàng </a></li>
-                    <li><a class="dropdown-item" href="#">Exit</a></li>
-                  </ul>
-                </li>-->
-              <div class='from-inline my-2 my-lg-0' style = "visibility: {{user_not_login}}">
+              <div class='from-inline my-2 my-lg-0 ' style = "visibility: {{user_not_login}}">
                 <a class="btn" href= {% url 'login' %}>Đăng nhập</a>
                 <a class="btn" href= {% url 'register' %}>Đăng kí </a>
               </div>
+
               <div class='from-inline my-2 my-lg-0'>  
                 <a href="{% url 'cart' %}"><img id="cart-icon" src="{% static 'app/images/cart.png' %}"></a>
                 <p id='cart-total' >{{cartitems}}</p>
+                
               </div>
             </div>
             </div>
           </nav>
           
-          <!-- Các loại thông báo popup  -->
-          <div id="success-register-Popup" class="popup">
-            <p>Đăng ký thành công!</p>
-          </div>
-          <div id="success-login-Popup" class="popup">
-            <p>Đăng nhập thành công!</p>
-          </div>
-          <div id="fail-register-Popup" class="popup">
-            <p>Đăng ký thất bại!</p>
-          </div>
-          <div id="fail-login-Popup" class="popup">
-            <p>Đăng nhập thất bại!</p>
-          </div>
-        
+          {% endblock nav_bar %}
           <!-- Main body -->
           {% block banner_slider %}{% endblock banner_slider %}
           {% block main-content %} {% endblock main-content %}
           {% block cart_content %} {% endblock cart_content %}
           {% block content_checkout %} {% endblock content_checkout %}
           {% block register %}{% endblock register %}
+          {% block staff %}{% endblock staff %}
+          {% block profile %}{% endblock profile%}
         <script src="" async defer></script>
         <!-- footer -->
         <footer class = "container--fluid bg-success text-center fixed-bottom p-2 mt-5">
-            Copyright
+            Copyright - Minh
         </footer>
         <script src="{%static 'app/js/cart.js' %}" > </script>
     </body>

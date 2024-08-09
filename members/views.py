@@ -122,3 +122,19 @@ def cart(request):
         'user_login': user_login
     }
     return render(request, 'app/cart.html', context)
+
+def staff(request):
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
+    
+    return render(request, 'app/staff.html', context)
+
+def profile(request):
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login
+    }
+    
+    return render(request, 'app/staff.html', context)
