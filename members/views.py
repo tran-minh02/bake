@@ -2,7 +2,10 @@ from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
-from .models import UserCreationForm
+from .models import *
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 #Biến tổng
@@ -131,10 +134,28 @@ def staff(request):
     
     return render(request, 'app/staff.html', context)
 
-def profile(request):
+def ordercheck(request):
     context = {
         'user_not_login': user_not_login, 
         'user_login': user_login
     }
     
-    return render(request, 'app/staff.html', context)
+    return render(request, 'app/ordercheck.html', context)
+
+@login_required
+def profile(request):
+    profile = Profile.objects.filter(user_id=request.user.id)
+    shipping = ShippingAddress.objects.filter(customer_id = request.user.id)
+    user_info = {
+        'email': request.user.email,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'phone': profile.first().phone_number,
+        'ship' : shipping
+    }
+    context = {
+        'user_not_login': user_not_login, 
+        'user_login': user_login,
+        'user' : user_info
+    }
+    return render(request, 'app/profile.html', context)

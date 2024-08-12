@@ -1,0 +1,56 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block profile %}
+
+<div class="contain-fluid" style="background-color: #eee;">
+    <br>
+        <div class='row'>
+            <div class = 'card col-9 bg-light border border-start mx-auto'>
+                <h3 class="mx-auto">Giới thiệu</h3>
+                <p>Họ và tên : {{ user.firstname }} {{user.lastname}}</p>
+                <p>Ngày sinh : {{ user.birthday }}</p>
+                <p>Email : {{ user.email }}</p>
+                <p>Điện thoại : {{ user.phone_number }} </p>
+                <table class="table table-hover">
+                    <thead>
+                        <td>Địa chỉ ship: </td>
+                    </thead>
+                    <tbody>
+                        <td>Hà Nội</td>
+                        {% for ship in ships %}
+                            <td>ship</td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <br>
+        <div class='row'>
+            <div class = 'card col-9 bg-light border border-start mx-auto'>
+                <h3 class="mx-auto">Cập nhập thông tin</h3><br>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-3">
+                            <p>Lastname</p><br>
+                            <p>Firstname</p><br>
+                            <p>Ngày Sinh</p><br>
+                            <p>Email</p><br>
+                            <p>Điện thoại</p><br>
+                        </div>
+                        <div class="col-9">
+                          <input type="text" name='lastname' id="form3Example1c" class="form-control me-2" placeholder="ex: Minh"><br>
+                          <input type="text" name='firstname' id="form3Example1c" class="form-control me-2" placeholder="ex: Trần Công"><br>
+                          <input type="date" name='birthday' id="form3Example1c" class="form-control me-2" ><br>
+                          <input type="email" name='emailname' id="form3Example1c" class="form-control me-2" placeholder="ex: testuser@gmail.com"><br>
+                          <input type="phone" name='phonename' id="form3Example1c" class="form-control me-2" placeholder="ex: 1234567890"><br>
+                        </div>
+                        <button type="submit" class = 'btn btn-success w-auto mx-auto'>Cập nhập</button>
+                    </div>
+                   <br>
+                   <br> 
+                </form>
+            </div>
+        </div>
+</div>
+{% endblock profile %}
