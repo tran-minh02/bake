@@ -24,10 +24,18 @@
                             <td>Địa chỉ ship: </td>
                             <td>Vùng</td>
                             <td>Số điện thoại</td>
+                            <td></td>
                         </thead>
                         <tbody>
                             <tr>
-                            <td>Hà Nội</td></tr>
+                            <td>Hà Nội</td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <a class='btn' id="AddShipAdress"><i class="fas fa-plus"></i></a>
+                                <div id="square" class="mt-3"></div>
+                            </td>
+                        </tr>
                             {% for ship in shipping %}
                             <tr>
                                 <td>{{ship.address}}</td>
@@ -41,6 +49,7 @@
                 </div>
             </div>
             <br>
+            
             <div class='row'>
                 <div class = 'card col-9 bg-light border border-start mx-auto'>
                     <h3 class="mx-auto">Cập nhập thông tin</h3><br>

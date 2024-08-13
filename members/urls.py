@@ -2,6 +2,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from .views import api1
 
 
 urlpatterns = [
@@ -17,6 +18,7 @@ urlpatterns = [
     path('staff/', views.staff, name = 'staff'),
     path('profile/', views.profile, name = 'profile'),
     path('ordercheck/', views.ordercheck, name = 'ordercheck'),
+    path('api/users/', api1.as_view() , name='user-list'),
     # path('update_item/', views.home, name="update_item"),
 ]
 if settings.DEBUG:

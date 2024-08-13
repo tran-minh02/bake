@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.forms import UserCreationForm
-
+from rest_framework import serializers
 # Create your models here.
 
 class ShippingAddress(models.Model):
@@ -87,9 +87,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
     
-class Staff(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birthdate = models.DateField(null=True, blank=True)
-    phone_number = models.CharField(max_length=15, null=True, blank=True)
-    def __str__(self):
-        return self.user.username
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']

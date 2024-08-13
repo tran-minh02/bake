@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     'django.contrib.humanize',
+    'rest_framework',
     'members',
 ]
 
@@ -137,7 +138,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # Session setting
-
+SESSION_COOKIE_AGE = 7200
 # Media setting
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'members', 'static', 'app', 'upload')

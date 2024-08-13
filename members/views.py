@@ -1,11 +1,11 @@
 from django.shortcuts import render,redirect
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .decorator import staff_required
+from rest_framework.views import APIView
 # Create your views here.
 
 def home(request):
@@ -24,7 +24,6 @@ def home(request):
         'products': products,
         'categories' : categories
               }
-    print(request.user.groups.all())
     return render(request, 'app/home.html',context)
 
 def login_now(request):
@@ -36,7 +35,7 @@ def login_now(request):
         user = authenticate(request,username = username,password =password)
         if user is not None :
             login(request,user)
-            return render(request,'app/home.html')
+            return redirect('home')
         else:
             messages.info(request, 'Tài khoản hoặc mật khẩu không chính xác!')
     categories = Category.objects.filter(is_sub =False)
@@ -51,6 +50,8 @@ def logout_now(request):
 
 def register(request):
     form = UserCreationForm()
+    
+    categories = Category.objects.filter(is_sub=False)
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -62,23 +63,17 @@ def register(request):
             login(request,user)
             # Lưu thông tin người dùng vào session
             request.session['user_id'] = user.id
-            context = {
-                'user': username
-                }
-            return render(request,'app/home.html',context)
+            return redirect('home')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Lỗi ở trường '{form.fields[field].label}': {error}")
-    categories = Category.objects.filter(is_sub=False)
+    
     context = {
         'form': form,
         'categories': categories
     }
     return render(request, 'app/register.html', context)
-
-def search(request):
-    return render(request, 'app/search.html')
 
 def category(request):
     categories = Category.objects.filter(is_sub = False)
@@ -102,6 +97,8 @@ def category(request):
         }
     return render(request,'app/category.html',context)
     
+def search(request):
+    return render(request, 'app/search.html')
 
 def checkout(request):
     categories = Category.objects.filter(is_sub=False)
@@ -124,8 +121,12 @@ def cart(request):
     }
     return render(request, 'app/cart.html', context)
 
-@staff_required
 def staff(request):
+    print(request.user.groups.all())
+    if request.user.groups.filter(name='Staff').exists() == False | request.user.groups.filter(name='Admin').exists() == False :
+        return redirect('home')
+    else:
+        pass
     context = {
         
     }
@@ -135,22 +136,23 @@ def ordercheck(request):
     context = {
         
     }
-    
     return render(request, 'app/ordercheck.html', context)
 
 @login_required
 def profile(request):
     profile = Profile.objects.get(user=request.user)
     shipping = ShippingAddress.objects.filter(customer_id = request.user)
-    
-    # print(request.user)
-    print(profile.phone_number)
-    # for i in shipping:
-    #     print(i.address)
-    print(request.user.first_name)
-    
     categories = Category.objects.filter(is_sub=False)
-    
+    user_p = request.user
+    if request.method == 'POST':
+        user_p.last_name = request.POST.get('lastname')
+        user_p.first_name = request.POST.get('firstname')
+        profile.birthdate = request.POST.get('birthday')
+        user_p.email = request.POST.get('emailname')
+        profile.phone_number= request.POST.get('phonename')
+        user_p.save()
+        profile.save()
+
     context = {
         'profile' : profile,
         'shipping': shipping,
@@ -158,4 +160,9 @@ def profile(request):
     }
     
     return render(request, 'app/profile.html',context)
-
+from rest_framework.response import Response
+class api1(APIView):
+    def get(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
