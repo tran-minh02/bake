@@ -5,7 +5,11 @@ from django.contrib.sessions.models import Session
 # Register your models here.
 class AdminShippingAddress(admin.ModelAdmin):
     list_display = ('customer', 'address', 'mobile')
-admin.site.register(Category)
+
+class AdminCategory(admin.ModelAdmin):
+    prepopulated_fields = {'slug':("name",)}
+
+admin.site.register(Category,AdminCategory)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(Product)

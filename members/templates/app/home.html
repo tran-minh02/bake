@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load humanize %}
 {% block banner_slider %}
 <div id="carouselExampleDark" class="carousel carousel-dark slide">
     <div class="carousel-indicators">
@@ -37,16 +38,17 @@
 {% block main-content %}
 <div class="row" style="width:100%">
   {% for product in products %}
-  <div class="col-lg-3">
-    <img clas="thumbnail" src="{{product.ImageURL}}" width=300 height=300>
-    <div class="box-element product">
-    <h6><strong>{{product.name}}</strong></h6>
-    <hr>
-    <h4 style="display: inline-block; float: right"><strong>{{product.formatted_price}} VNĐ</strong></h4>
-    <button  data-product={{product.id}} data-action = "add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
-    <a class="btn btn-outline-success" href="{% url 'detail' %}?id={{product.id}}">Chi tiết</a>
-    
-    
+  <div class="col-lg-3 col-md-4 col-sm-6">
+    <br>
+    <div class="card">
+        <img class="card-img-top" src='{{ product.ImageURL }}' >
+        <div class="card-body">
+          <h6><strong>{{product.name}}</strong></h6>
+          <hr>
+          <h4><strong>{{product.price |floatformat:0|intcomma }}VNĐ</strong></h4>
+          <button  data-product={{product.id}} data-action = "add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
+          <a class="btn btn-outline-success" href="{% url 'detail' %}?id={{product.id}}">Chi tiết</a>
+        </div>
     </div>
   </div>
   {% endfor %}

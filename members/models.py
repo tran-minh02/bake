@@ -60,6 +60,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
     @property
+    def ImageURL(self):
+        try:
+            url= self.image.url
+        except:
+            url=''
+        return url
+    @property
     def formatted_price(self):
         return "{:,.0f}".format(self.price).replace(",", ".")
     

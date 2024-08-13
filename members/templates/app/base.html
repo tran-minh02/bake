@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -93,7 +94,7 @@
               {% comment %} Đây là chỗ hiện thông tin nếu người dùng đã đăng nhập thành công  {% endcomment %}
               <div class='dropdown from-inline ms-2 my-2 my-lg-0' style = "visibility: {% if user.is_authenticated %}visible{% else %}hidden{% endif %}">
                 <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
-                  Khách hàng : {{ request.user }}
+                  Khách hàng : {{ user.username }}
                 </button>
                 <ul class="dropdown-menu">
                   <li><a class="dropdown-item" href="{% url 'profile' %}">Hồ sơ người dùng</a></li>

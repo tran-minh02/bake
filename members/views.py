@@ -5,67 +5,51 @@ from django.contrib.auth import authenticate,login,logout
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from .decorator import staff_required
 # Create your views here.
 
-#Biến tổng
-user_not_login = 'visible'
-user_login = 'hidden'
-
 def home(request):
-    context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
-    }
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+        items = order.orderitem_set.all()
+        cartitems = order.get_cart_items
+    else:
+        items =[]
+        order = {'get_cart_items':0, 'get_cart_tatol':0}
+        cartitems = order['get_cart_items']
+    products = Product.objects.all()
+    categories = Category.objects.filter(is_sub=False)
+    context= {
+        'products': products,
+        'categories' : categories
+              }
+    print(request.user.groups.all())
     return render(request, 'app/home.html',context)
 
 def login_now(request):
-    global user_login
-    global user_not_login
     if request.user.is_authenticated:
-        context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
-        }
-        return render(request, 'app/home.html', context)
+        return redirect('home')
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = authenticate(request,username = username,password =password)
         if user is not None :
-            user_not_login = 'hidden'
-            user_login = 'visible'
-            context = {
-                'user_not_login': user_not_login, 
-                'user_login': user_login
-            }
             login(request,user)
-            return render(request,'app/home.html',context)
+            return render(request,'app/home.html')
         else:
             messages.info(request, 'Tài khoản hoặc mật khẩu không chính xác!')
-    
-    user_not_login = 'visibile'
-    user_login = 'hidden'
+    categories = Category.objects.filter(is_sub =False)
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
+        'categories': categories
     }
     return render(request,'app/login.html',context)
 
 def logout_now(request):
-    
     logout(request)
-    user_not_login = 'visibile'
-    user_login = 'hidden'
-    context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
-    }
-    return render(request, 'app/home.html', context)
+    return redirect('home')
 
 def register(request):
-    global user_login
-    global user_not_login
     form = UserCreationForm()
     if request.method == "POST":
         form = UserCreationForm(request.POST)
@@ -78,84 +62,100 @@ def register(request):
             login(request,user)
             # Lưu thông tin người dùng vào session
             request.session['user_id'] = user.id
-            user_not_login = 'hidden'
-            user_login = 'visibile'
             context = {
-                'user': username,
-                'user_login':user_login, 
-                'user_not_login':user_not_login
+                'user': username
                 }
             return render(request,'app/home.html',context)
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f"Lỗi ở trường '{form.fields[field].label}': {error}")
-    user_not_login = "visibile"
-    user_login = "hidden"
+    categories = Category.objects.filter(is_sub=False)
     context = {
         'form': form,
-        'user_login':user_login,
-        'user_not_login':user_not_login
+        'categories': categories
     }
     return render(request, 'app/register.html', context)
 
 def search(request):
-    context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
-    }
-    return render(request, 'app/search.html',context)
+    return render(request, 'app/search.html')
 
 def category(request):
-    return render(request, 'app/category.html')
+    categories = Category.objects.filter(is_sub = False)
+    active_category = request.GET.get('category','')
+    if active_category:
+        products = Product.objects.filter(category__slug = active_category)
+        if request.user.is_authenticated:
+            customer = request.user
+            order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+            items = order.orderitem_set.all()
+            cartitems = order.get_cart_items
+        else:
+            items = []
+            order = {'get_cart_items':0, 'get_cart_tatol':0}
+            cartitems = order['get_cart_items']
+    context = {
+        'cartitems': cartitems,
+        'categories': categories, 
+        'products': products, 
+        'active_category': active_category
+        }
+    return render(request,'app/category.html',context)
+    
 
 def checkout(request):
+    categories = Category.objects.filter(is_sub=False)
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
+        'categories':categories
     }
     return render(request, 'app/checkout.html',context)
 
 def detail(request):
-    return render(request, 'app/detail.html')
+    categories = Category.objects.filter(is_sub=False)
+    context = {
+        'categories':categories
+    }
+    return render(request, 'app/detail.html',context)
 
 def cart(request):
+    categories = Category.objects.filter(is_sub=False)
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
+        'categories':categories
     }
     return render(request, 'app/cart.html', context)
 
+@staff_required
 def staff(request):
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
+        
     }
-    
     return render(request, 'app/staff.html', context)
 
 def ordercheck(request):
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login
+        
     }
     
     return render(request, 'app/ordercheck.html', context)
 
 @login_required
 def profile(request):
-    profile = Profile.objects.filter(user_id=request.user.id)
-    shipping = ShippingAddress.objects.filter(customer_id = request.user.id)
-    user_info = {
-        'email': request.user.email,
-        'first_name': request.user.first_name,
-        'last_name': request.user.last_name,
-        'phone': profile.first().phone_number,
-        'ship' : shipping
-    }
+    profile = Profile.objects.get(user=request.user)
+    shipping = ShippingAddress.objects.filter(customer_id = request.user)
+    
+    # print(request.user)
+    print(profile.phone_number)
+    # for i in shipping:
+    #     print(i.address)
+    print(request.user.first_name)
+    
+    categories = Category.objects.filter(is_sub=False)
+    
     context = {
-        'user_not_login': user_not_login, 
-        'user_login': user_login,
-        'user' : user_info
+        'profile' : profile,
+        'shipping': shipping,
+        'categories':categories
     }
-    return render(request, 'app/profile.html', context)
+    
+    return render(request, 'app/profile.html',context)
+
