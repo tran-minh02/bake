@@ -17,9 +17,9 @@ urlpatterns = [
     path('checkout/', views.checkout, name="checkout"),
     path('staff/', views.staff, name = 'staff'),
     path('profile/', views.profile, name = 'profile'),
-    path('ordercheck/', views.ordercheck, name = 'ordercheck'),
+    path('ordercheck/', views.profile, name = 'ordercheck'),
+    path('update_item/', views.update_item, name="update_item"),
     path('api/users/', api1.as_view() , name='user-list'),
-    # path('update_item/', views.home, name="update_item"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

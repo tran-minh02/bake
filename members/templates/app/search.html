@@ -1,5 +1,6 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -18,16 +19,17 @@
         {% block register %}
         <div class="row" style="width:100%">
             {% for product in keys %}
-            <div class="col-lg-3">
-              <img clas="thumbnail" src="{{product.ImageURL}}" width=300 height=300>
-              <div class="box-element product">
-              <h6><strong>{{product.name}}</strong></h6>
-              <hr>
-          
-              <button  data-product={{product.id}} data-action = "add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
-              <a class="btn btn-outline-success" href="{% url 'detail' %}?id={{product.id}}">Chi tiết</a>
-              <h4 style="display: inline-block; float: right"><strong>{{product.price | floatformat:0}}VNĐ</strong></h4>
-              
+            <div class="col-lg-3 col-md-4 col-sm-6">
+              <br>
+              <div class="card">
+                  <img class="card-img-top" src='{{ product.ImageURL }}' >
+                  <div class="card-body">
+                    <h6><strong>{{product.name}}</strong></h6>
+                    <hr>
+                    <h4><strong>{{product.price |floatformat:0|intcomma }}VNĐ</strong></h4>
+                    <button  data-product={{product.id}} data-action = "add" class="btn btn-outline-secondary add-btn update-cart">Thêm vào giỏ hàng</button>
+                    <a class="btn btn-outline-success" href="{% url 'detail' %}?id={{product.id}}">Chi tiết</a>
+                  </div>
               </div>
             </div>
             {% endfor %}

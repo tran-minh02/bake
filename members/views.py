@@ -6,6 +6,7 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
+import json
 # Create your views here.
 
 def home(request):
@@ -96,33 +97,121 @@ def category(request):
         'active_category': active_category
         }
     return render(request,'app/category.html',context)
-    
-def search(request):
-    return render(request, 'app/search.html')
 
-def checkout(request):
-    categories = Category.objects.filter(is_sub=False)
+# Need do
+def search(request):
+    if  request.method == "POST":
+        searched = request.POST["searched"]
+        keys = Product.objects.filter(name__contains = searched)
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+        items = order.orderitem_set.all()
+        cartitems = order.get_cart_items
+    else:
+        items =[]
+        order = {'get_cart_items':0, 'get_cart_tatol':0}
+        cartitems = order['get_cart_items']
+    categories = Category.objects.filter(is_sub =False)
+    products = Product.objects.all()
     context = {
-        'categories':categories
-    }
+            'items': items,
+            'searched': searched, 
+            'keys': keys, 
+            'products': products, 
+            'categories': categories,
+            'cartitems': cartitems
+        }
+    return render(request, 'app/search.html', context)
+
+# Need do
+def checkout(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+        items = order.orderitem_set.all()
+        cartitems = order.get_cart_items
+    else:
+        items =[]
+        order = {'get_cart_items':0, 'get_cart_tatol':0}
+        cartitems = order['get_cart_items']
+    categories = Category.objects.filter(is_sub =False)
+    context= {
+            'items': items, 
+            'order': order, 
+            'cartitems': cartitems, 
+            'categories': categories
+        }
     return render(request, 'app/checkout.html',context)
 
+# Need do
 def detail(request):
-    categories = Category.objects.filter(is_sub=False)
-    context = {
-        'categories':categories
-    }
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+        items = order.orderitem_set.all()
+        cartitems = order.get_cart_items
+    else:
+        items =[]
+        order = {'get_cart_items':0, 'get_cart_tatol':0}
+        cartitems = order['get_cart_items']
+    id = request.GET.get('id', '')
+    products = Product.objects.filter(id=id)
+    categories = Category.objects.filter(is_sub =False)
+    context= {
+                'products': products,
+                'items': items, 
+                'order': order, 
+                'categories': categories,
+                'cartitems': cartitems
+              }
     return render(request, 'app/detail.html',context)
 
+# Need do
 def cart(request):
-    categories = Category.objects.filter(is_sub=False)
-    context = {
-        'categories':categories
-    }
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+        items = order.orderitem_set.all()
+        cartitems = order.get_cart_items
+
+    else:
+        items =[]
+        order = {'get_cart_items':0, 'get_cart_tatol':0}
+        cartitems = order['get_cart_items']
+
+    categories = Category.objects.filter(is_sub =False)
+    context= {
+        'categories':categories,
+        'items': items, 
+        'order': order, 
+        'cartitems': cartitems, 
+        }
     return render(request, 'app/cart.html', context)
+
+## Need do
+def update_item(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    customer = request.user
+    product = Product.objects.get(id = productId)
+    order, created =  Order.objects.get_or_create(customer = customer,complete =False)
+    orderItem, created =  OrderItem.objects.get_or_create(order = order,product =product)
+    if action == 'add':
+        orderItem.quantity +=1
+    elif action == 'remove':
+        orderItem.quantity -=1
+    orderItem.save()
+    if orderItem.quantity<=0:
+        orderItem.delete()
+    
+    return JsonResponse('added',safe=False)
+
 
 def staff(request):
     print(request.user.groups.all())
+    # Check người dùng có trong group Staff hay không 
     if request.user.groups.filter(name='Staff').exists() == False | request.user.groups.filter(name='Admin').exists() == False :
         return redirect('home')
     else:
@@ -133,11 +222,16 @@ def staff(request):
     return render(request, 'app/staff.html', context)
 
 def ordercheck(request):
+    
+    if request.user.groups.filter(name='Staff').exists() == False | request.user.groups.filter(name='Admin').exists() == False :
+        return redirect('home')
     context = {
         
     }
     return render(request, 'app/ordercheck.html', context)
 
+
+    
 @login_required
 def profile(request):
     profile = Profile.objects.get(user=request.user)
@@ -160,6 +254,7 @@ def profile(request):
     }
     
     return render(request, 'app/profile.html',context)
+
 from rest_framework.response import Response
 class api1(APIView):
     def get(self, request):
