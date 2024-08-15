@@ -1,0 +1,11 @@
+đăng nhập đăng xuất và phân quyền người dùng
+1. Đăng Nhập (Login)
+2. Xác Thực Người Dùng: Kiểm tra thông tin đăng nhập (tên đăng nhập và mật khẩu) để đảm bảo người dùng là hợp lệ.
+3. Quản Lý Phiên Đăng Nhập: Tạo và duy trì phiên làm việc cho người dùng, thường bằng cách sử dụng cookies hoặc tokens.
+4. Đăng Xuất (Logout)
+5. Kết Thúc Phiên Làm Việc: Xóa hoặc vô hiệu hóa phiên làm việc hiện tại của người dùng.
+6. Bảo Mật: Đảm bảo rằng phiên làm việc không thể tiếp tục được sử dụng sau khi đăng xuất, ngăn chặn truy cập trái phép.
+7. Phân Quyền Người Dùng (User Authorization)
+8. Quyền Truy Cập: Xác định và kiểm soát quyền truy cập của người dùng tới các tài nguyên và chức năng của hệ thống.
+9. Nhóm và Vai Trò: Sắp xếp người dùng vào các nhóm hoặc vai trò khác nhau để quản lý quyền truy cập dễ dàng hơn.
+10.Quản Lý Quyền Hạn: Tạo và quản lý các quyền hạn chi tiết cho từng nhóm, vai trò hoặc người dùng cụ thể.

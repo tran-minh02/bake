@@ -58,7 +58,7 @@ ROOT_URLCONF = "bkav2.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'frontend', 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -139,6 +139,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Session setting
 SESSION_COOKIE_AGE = 7200
+
 # Media setting
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'members', 'static', 'app', 'upload')
+
+# Statcfiles_dir
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend', 'static'),
+]
